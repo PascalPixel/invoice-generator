@@ -1,155 +1,190 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>jQuery invoice generator</title>
-    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-      /* Overall better look */
-      * {
-      vertical-align: baseline;
-      text-rendering: optimizeLegibility;
-      -webkit-font-smoothing: antialiased;
-      }
-      /* Form input look */
-      #invoice input[type="text"] {
-      border: 1px solid rgba(0,0,0,0.1);
-      padding: 0 10px;
-      outline: 0;
-      border-radius: 4px;
-      box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
-      margin-bottom: 10px;
-      }
-      /* Remove input focus outline on mac */
-      #invoice input[type="text"]:focus {
-      outline-color: transparent;
-      outline-style: none;
-      }
-      #invoice ul {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-      }
-      #invoice li {
-      padding: 15px 0;
-      line-height: 32px;
-      border-bottom: solid 1px #dbdbdb;
-      }
-      #invoice .foo {
-      width: 40px;
-      float: right;
-      text-align: right;
-      }
-      #invoice input[type="checkbox"] {
-      margin: 10px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <form id="invoice">
-        <div class="row">
-          <div class="col-sm-9">
-            <h3 class="header"></h3>
-            <ul class="expenses">
-              <li id="item-1">
-                <div class="row">
-                  <div class="col-xs-8">
-                    <input onclick="this.select()" style="width:100%;" type="text" value="Item description">
-                  </div>
-                  <div class="col-xs-4">
-                    <input class="foo timed" onclick="this.select();" type="text" type="number" value="0">
-                    <select class="type">
-                      <option value="0">Timed</option>
-                      <option value="1">Fixed Cost</option>
-                      <option value="2">Quantity</option>
-                      <option value="3">Mileage</option>
-                    </select>
-                  </div>
-                </div>
-              </li>
-              <li id="tax-bar" style="display:none;"><span id="tax-print">0% tax</span> <span class="fee pull-right">0</span><span class="pull-right">$</span></li>
-              <li>
-                <h3>Total cost <span class="total pull-right">0</span><span class="pull-right">$</span></h3>
-              </li>
-            </ul>
-            <input class="btn btn-primary btn-block btn-lg" type="submit" value="Submit">
-          </div>
-          <div class="col-sm-3">
-            <ul>
-            <li><h4>Settings</h4></li>
-            <li>Hourly rate <input id="hourly-rate" class="foo" onclick="this.select();" type="text" type="number" value="50"><span class="currency pull-right"></span></li>
-            <li>Cost per mile <input id="cost-per-mile" class="foo" onclick="this.select();" type="text" type="number" value="10"><span class="currency pull-right"></span></li>
-            <li>Taxable <input id="tax-check" class="pull-right" type="checkbox"></li>
-            <li id="tax-input" style="display:none;">Tax <span class="pull-right">%</span><input id="tax-amount" class="foo" onclick="this.select();" type="text" type="number" value="0"></li>
-            </ul>
-          </div>
-        </div>
-      </form>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>jQuery invoice generator</title>
+<link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+<style>
+/* Overall better look */
+* {
+vertical-align: baseline;
+text-rendering: optimizeLegibility;
+-webkit-font-smoothing: antialiased;
+}
+/* Form input look */
+#invoice input[type="text"] {
+border: 1px solid rgba(0,0,0,0.1);
+padding: 1px 5px;
+outline: 0;
+border-radius: 4px;
+box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+margin-bottom: 10px;
+}
+/* Remove input focus outline on mac */
+#invoice input[type="text"]:focus {
+outline-color: transparent;
+outline-style: none;
+}
+/* Remove list styling on invoice */
+#invoice ul {
+list-style-type: none;
+margin: 0;
+padding: 0;
+}
+/* Style rows of invoice */
+#invoice li {
+padding: 15px 0;
+line-height: 32px;
+border-bottom: solid 1px #dbdbdb;
+}
+/* Style input boxes for numbers */
+#invoice .foo {
+width: 40px;
+float: right;
+text-align: right;
+}
+/* Checkbox centering */
+#invoice input[type="checkbox"] {
+margin: 10px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <form id="invoice">
+    <div class="row">
+      <div class="col-sm-9">
+        <h3 class="header"></h3>
+        <ul>
+          <li id="item-1">
+            <div class="row">
+              <div class="col-sm-8">
+                <input onclick="this.select()" style="width:100%;" type="text" value="Item description">
+              </div>
+              <div class="col-sm-4">
+                <input class="foo timed" onclick="this.select();" type="text" type="number" value="0">
+                <select class="type">
+                  <option value="0">Timed</option>
+                  <option value="1">Fixed</option>
+                  <option value="2">Quantity</option>
+                  <option value="3">Mileage</option>
+                </select>
+              </div>
+            </div>
+          </li>
+          <li id="item-1">
+            <div class="row">
+              <div class="col-sm-8">
+                <input onclick="this.select()" style="width:100%;" type="text" value="Item description">
+              </div>
+              <div class="col-sm-4">
+                <input class="foo timed" onclick="this.select();" type="text" type="number" value="0">
+                <select class="type">
+                  <option value="0">Timed</option>
+                  <option value="1">Fixed</option>
+                  <option value="2">Quantity</option>
+                  <option value="3">Mileage</option>
+                </select>
+              </div>
+            </div>
+          </li>
+          <li id="tax-bar" style="display:none;"><span id="tax-print">0% tax</span> <span class="fee pull-right">0</span><span class="pull-right">$</span></li>
+          <li>
+            <h3>Total cost <span class="total pull-right">0.00</span><span class="currency pull-right"></span></h3>
+          </li>
+        </ul>
+        <input class="btn btn-primary btn-block btn-lg" type="submit" value="Submit">
+      </div>
+      <div class="col-sm-3">
+        <ul>
+          <li><h4>Settings</h4></li>
+          <li>Hourly rate <input id="rate-amount" class="foo" onclick="this.select();" type="text" type="number" value="50"><span class="currency pull-right"></span></li>
+          <li>Cost per mile <input id="mile-amount" class="foo" onclick="this.select();" type="text" type="number" value="10"><span class="currency pull-right"></span></li>
+          <li>Taxable <input id="tax-check" class="pull-right" type="checkbox"></li>
+          <li id="tax-input" style="display:none;">Tax <span class="pull-right">%</span><input id="tax-amount" class="foo" onclick="this.select();" type="text" type="number" value="0"></li>
+        </ul>
+      </div>
     </div>
-    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
-    <script>
-    $(document).ready(function(){
+  </form>
+</div>
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+<script>
+$(document).ready(function(){
+
+  $('.currency').html('$');
+  
+  $('#invoice select').on('change', function () {
+  	if ($(this).val() == 0) {
+  	  $(this).siblings(".foo").removeClass("fixed quantity mileage");
+  		$(this).siblings(".foo").addClass("timed");
+  	} if ($(this).val() == 1) {
+  	  $(this).siblings(".foo").removeClass("timed quantity mileage");
+    	$(this).siblings(".foo").addClass("fixed");
+  	} if ($(this).val() == 2) {
+  	  $(this).siblings(".foo").removeClass("fixed timed mileage");
+    	$(this).siblings(".foo").addClass("quantity");
+  	} else {
+  	  $(this).siblings(".foo").removeClass("fixed quantity timed");
+  		$(this).siblings(".foo").addClass("mileage");
+  	}
+  });
+  
+  $('#tax-check').on('change', function () {
+  	$('#tax-input').slideToggle();
+  	$('#tax-bar').slideToggle();
+  });
+  
+  var $form = $('.expenses'),
+  
+  $flatcalc = $form.find('.foo');
+  
+  $('#invoice').on('keyup change', function() {
+  
+    //Get houlry rate from input
+    var rate = Number($('#rate-amount').val());
     
-      $('.currency').html('$');
-      
-      $('#invoice select').on('change', function () {
-      	if ($(this).val() == 0) {
-      	  $(this).siblings(".foo").removeClass("fixed quantity mileage");
-      		$(this).siblings(".foo").addClass("timed");
-      	} if ($(this).val() == 1) {
-      	  $(this).siblings(".foo").removeClass("timed quantity mileage");
-        	$(this).siblings(".foo").addClass("fixed");
-      	} if ($(this).val() == 2) {
-      	  $(this).siblings(".foo").removeClass("fixed timed mileage");
-        	$(this).siblings(".foo").addClass("quantity");
-      	} else {
-      	  $(this).siblings(".foo").removeClass("fixed quantity timed");
-      		$(this).siblings(".foo").addClass("mileage");
-      	}
-      });
-      
-      $('#tax-check').on('change', function () {
-      	$('#tax-input').slideToggle();
-      	$('#tax-bar').slideToggle();
-      });
-        
-      var tax = Number($('#tax-amount').val());
-      
-      var $form = $('.expenses'),
-      $flatcalc = $form.find('.foo');
-      
-      $('#invoice').on('keyup change', function() {
-        
-        //Print the tax
-        $('#tax-print').html('Tax ' + tax + '%');
-      
-        var flatrate = 0;
-      	$flatcalc.each(function () {
-      		var value = Number($(this).val());
-      		if (!isNaN(value)) flatrate += value;
-      	});
-      
-      	var fee = (flatrate / 100 * tax);
-      	$('.fee').text(fee.toFixed(2));
-      	$('.total').text((flatrate + fee).toFixed(2));
-      
-      	var pp = 0;
-      	$('.fixed').each(function () {
-      		var value = Number($(this).val());
-      		if (!isNaN(value)) pp += value;
-      	});
-      	var combined = flatrate - pp;
-      	var pptot = combined / 100 * tax;
-      	$('.extra').text((combined+ pptot).toFixed(2));
-      });
-      
-      //Errorcheck
-      $('.header').html('jQuery invoice generator');
-      
-    });
-    </script>
-  </body>
+    //Get cost per mile from input
+    var mile = Number($('#mile-amount').val());
+    
+    //Get tax from input
+    var tax = Number($('#tax-amount').val());
+    
+    //Print the tax
+    $('#tax-print').html('Tax ' + tax + '%');
+    
+    var amount = 0;
+  	$flatcalc.each(function () {
+  		var value = Number($(this).val());
+  		if (!isNaN(value)) amount += value;
+  	});
+  	
+  	var fee = (amount / 100 * tax);
+  	
+  	$('.fee').text(fee.toFixed(2));
+  	
+  	$('.total').text((amount + fee).toFixed(2));
+  	
+  	var fixed = 0;
+  	
+  	$('.fixed').each(function () {
+  		var value = Number($(this).val());
+  		if (!isNaN(value)) fixed += value;
+  	});
+  	
+  	var combined = amount - fixed;
+  	
+  	var fixedtot = combined / 100 * tax;
+  	
+  	$('.extra').text((combined+ fixedtot).toFixed(2));
+  	
+  });
+  
+  //Errorcheck
+  $('.header').html('jQuery invoice generator');
+
+});
+</script>
+</body>
 </html>
