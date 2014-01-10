@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>jQuery invoice generator</title>
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      /* Overall better look */
+      * {
+      vertical-align: baseline;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      }
+      /* Remove input focus outline on mac */
+      input:focus {
+      outline-color: transparent;
+      outline-style: none;
+      }
+      /* Form input look */
+      form input {
+      border: 1px solid rgba(0,0,0,0.1);
+      padding: 0 10px;
+      outline: 0;
+      border-radius: 4px;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+      }
+      .invoice {
+      
+      }
+      .invoice ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      }
+      .invoice li {
+      padding: 15px 0;
+      line-height: 32px;
+      border-bottom: solid 1px #dbdbdb;
+      }
+      .invoice img {
+      width: 30px;
+      }
+      .invoice .foo {
+      width: 40px;
+      float: right;
+      text-align: right;
+      }
+      .invoice input[type="checkbox"] {
+      margin: 9px 30px 0 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <form class="invoice">
+        <div class="row">
+          <div class="col-sm-8">
+            <h3 class="box-header">jQuery invoice generator</h3>
+            <ul class="expenses">
+            
+              <li>
+                <div class="row">
+                  <div class="col-xs-8">
+                    <input onclick="this.select()" style="width:100%;" type="text" value="Item description">
+                  </div>
+                  <div class="col-xs-4">
+                    <input class="foo" onclick="this.select();" type="text" value="0">
+                    <select class="type">
+                      <option value="timed">Timed</option>
+                      <option value="fixedcost">Fixed Cost</option>
+                      <option value="quantity">Quantity</option>
+                      <option value="mileage">Mileage</option>
+                    </select>
+                  </div>
+                </div>
+              </li>
+          
+              <li><a data-original-title="TAX" rel="tooltip">21% tax</a> <span class="fee pull-right">0</span><span class="pull-right">$</span></li>
+          
+              <li>
+                <h3>Total cost <span class="total pull-right">0</span><span class="pull-right">$</span></h3>
+              </li>
+              
+            </ul>
+            <input class="btn btn-primary btn-block" type="submit" value="Submit">
+          </div>
+          <div class="col-sm-4">
+            <ul>
+            <li><h4>Settings</h4></li>
+            <li>Hourly rate <input class="foo" onclick="this.select();" type="text" value="0"></li>
+            <li>Cost per mile <input class="foo" onclick="this.select();" type="text" value="0"></li>
+            <li>Taxable <input class="type" type="checkbox"></li>
+            </ul>
+          </div>
+        </div>
+      </form>
+    </div>
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    <script>
+    $(document).ready(function(){
+    
+    	$('[rel=tooltip]').tooltip();
+      
+      $('input[type="checkbox"]').on('change', function () {
+      	if ($(this).is(':checked')) {
+      		$(this).siblings(".foo").addClass("ispp");
+      	} else {
+      		$(this).siblings(".foo").removeClass("ispp");
+      	}
+      	calcTotal();
+      });
+      
+      var $form = $('.expenses'),
+      $flatcalc = $form.find('.foo');
+      
+      $form.on('keyup', '.foo', function () {
+      	calcTotal();
+      });
+      
+      //Calculate the total cost and the tax
+      function calcTotal(){
+      	var flatrate = 0;
+      	$flatcalc.each(function () {
+      		var value = Number($(this).val());
+      		if (!isNaN(value)) flatrate += value;
+      	});
+      
+      	var fee = (flatrate / 100 * 21);
+      	$('.fee').text(fee.toFixed(2));
+      	$('.total').text((flatrate + fee).toFixed(2));
+      
+      	var pp = 0;
+      	$('.ispp').each(function () {
+      		var value = Number($(this).val());
+      		if (!isNaN(value)) pp += value;
+      	});
+      	var combined = flatrate - pp;
+      	var pptot = combined / 100 * 21;
+      	$('.extra').text((combined+ pptot).toFixed(2));
+      }
+      
+      $("a").tooltip({
+        'selector': '',
+        'placement': 'bottom'
+      });
+      
+    });
+    </script>
+  </body>
+</html>
