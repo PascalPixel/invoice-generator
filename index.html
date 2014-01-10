@@ -6,26 +6,91 @@
 <title>jQuery invoice generator</title>
 <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
 <style>
-/* Overall better look */
+
+/* Theme Start */
 * {
 vertical-align: baseline;
 text-rendering: optimizeLegibility;
 -webkit-font-smoothing: antialiased;
 }
-/* Form input look */
-#invoice input[type="text"] {
-border: 1px solid rgba(0,0,0,0.1);
-padding: 1px 5px;
-outline: 0;
+body {
+background: #fafafa;
+color:#9e9e9e;
+}
+h1, h2, h3, h4, h5 {
+font-weight: bold;
+}
+.btn {
+background: #fafafa;
+background: -webkit-linear-gradient(top, #ffffff, #eeeeee);
+background: -moz-linear-gradient(top, #ffffff, #eeeeee);
+background: -o-linear-gradient(top, #ffffff, #eeeeee);
+background: linear-gradient(to bottom, #ffffff, #eeeeee);
+border: 1px solid #bbbbbb;
 border-radius: 4px;
-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
-margin-bottom: 10px;
+box-shadow: inset 0 1px 0px rgba(255, 255, 255, 0.4);
+color: #555555;
+cursor: pointer;
+display: inline-block;
+font-weight: bold;
+outline: none;
+text-shadow: 0 1px 0 white;
 }
-/* Remove input focus outline on mac */
-#invoice input[type="text"]:focus {
-outline-color: transparent;
-outline-style: none;
+.btn-primary {
+background: #1385e5;
+background: -webkit-linear-gradient(top, #53b2fc, #1385e5);
+background: -moz-linear-gradient(top, #53b2fc, #1385e5);
+background: -o-linear-gradient(top, #53b2fc, #1385e5);
+background: linear-gradient(to bottom, #53b2fc, #1385e5);
+border-color: #075fa9;
+color: white;
+text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.4);
 }
+select {
+margin-top: 10px;
+padding: 10px;
+font-size: 12px;
+line-height: 1;
+width: 100%;
+-moz-appearance: none;
+-webkit-appearance: none;
+background: #fafafa;
+background: -webkit-linear-gradient(top, #ffffff, #eeeeee);
+background: -moz-linear-gradient(top, #ffffff, #eeeeee);
+background: -o-linear-gradient(top, #ffffff, #eeeeee);
+background: linear-gradient(to bottom, #ffffff, #eeeeee);
+border: 1px solid #bbbbbb;
+border-radius: 4px;
+box-shadow: inset 0 1px 0px rgba(255, 255, 255, 0.4);
+color: #555555;
+cursor: pointer;
+font-weight: bold;
+outline: none;
+text-shadow: 0 1px 0 white;
+}
+.caret {
+display: inline-block;
+width: 0;
+height: 0;
+margin-left: 2px;
+vertical-align: middle;
+border-top: 4px solid black;
+border-right: 4px solid transparent;
+border-left: 4px solid transparent;
+position: absolute;
+right: 25px;
+top:25px;
+}
+.box {
+background: #fff;
+margin-top: 20px;
+border-radius: 7px;
+border: rgba(0,0,0,0.15) solid 1px;
+box-shadow: 0px 2px 2px rgba(0,0,0,0.1);
+padding: 10px 20px;
+}
+/* Theme End */
+
 /* Remove list styling on invoice */
 #invoice ul {
 list-style-type: none;
@@ -40,69 +105,105 @@ border-bottom: solid 1px #dbdbdb;
 }
 /* Style input boxes for numbers */
 #invoice .foo {
-width: 40px;
 float: right;
 text-align: right;
 }
 /* Checkbox centering */
-#invoice input[type="checkbox"] {
-margin: 10px;
+#invoice input {
+margin: 10px 0;
 }
+/* Dollar box */
+#invoice .money-input {
+position: relative;
+}
+#invoice .money-input input {
+padding-left: 20px;
+}
+#invoice .money-input .currency {
+position:absolute;
+color:rgba(0,0,0,0.2);
+left:10px;
+top:1px;
+}
+
 </style>
 </head>
 <body>
 <div class="container">
   <form id="invoice">
     <div class="row">
-      <div class="col-sm-9">
-        <h3 class="header"></h3>
-        <ul>
-          <li id="item-1">
-            <div class="row">
-              <div class="col-sm-8">
-                <input onclick="this.select()" style="width:100%;" type="text" value="Item description">
+      <div class="col-sm-8">
+        <div class="box">
+          <h3 class="header"></h3>
+          <ul>
+            <li id="item-1">
+              <div class="row">
+                <div class="col-lg-6">
+                  <input onclick="this.select()" class="form-control" type="text" value="Item description">
+                </div>
+                <div class="col-xs-6 col-sm-4 col-sm-offset-5 col-lg-3 col-lg-offset-0">
+                  <select class="type">
+                    <option value="0">Select type</option>
+                    <option value="1">Timed</option>
+                    <option value="2">Fixed</option>
+                    <option value="3">Quantity</option>
+                    <option value="4">Mileage</option>
+                  </select>
+                  <div class="caret"></div>
+                </div>
+                <div class="col-xs-6 col-sm-3">
+                  <div class="money-input">
+                    <span class="currency"></span>
+                    <input id="tax-amount" class="form-control" onclick="this.select();" type="text" type="number" value="0">
+                  </div>
+                </div>
               </div>
-              <div class="col-sm-4">
-                <input class="foo timed" onclick="this.select();" type="text" type="number" value="0">
-                <select class="type">
-                  <option value="0">Timed</option>
-                  <option value="1">Fixed</option>
-                  <option value="2">Quantity</option>
-                  <option value="3">Mileage</option>
-                </select>
-              </div>
-            </div>
-          </li>
-          <li id="item-1">
-            <div class="row">
-              <div class="col-sm-8">
-                <input onclick="this.select()" style="width:100%;" type="text" value="Item description">
-              </div>
-              <div class="col-sm-4">
-                <input class="foo timed" onclick="this.select();" type="text" type="number" value="0">
-                <select class="type">
-                  <option value="0">Timed</option>
-                  <option value="1">Fixed</option>
-                  <option value="2">Quantity</option>
-                  <option value="3">Mileage</option>
-                </select>
-              </div>
-            </div>
-          </li>
-          <li id="tax-bar" style="display:none;"><span id="tax-print">0% tax</span> <span class="fee pull-right">0</span><span class="pull-right">$</span></li>
-          <li>
-            <h3>Total cost <span class="total pull-right">0.00</span><span class="currency pull-right"></span></h3>
-          </li>
-        </ul>
-        <input class="btn btn-primary btn-block btn-lg" type="submit" value="Submit">
+            </li>
+            <li id="tax-bar" style="display:none;"><span id="tax-print">0% tax</span> <span class="fee pull-right">0</span><span class="pull-right">$</span></li>
+            <li>
+              <h3>Total cost <span class="total pull-right">0.00</span><span class="currency pull-right"></span></h3>
+            </li>
+          </ul>
+          <input class="btn btn-primary btn-block btn-lg" type="submit" value="Save as invoice">
+        </div>
       </div>
-      <div class="col-sm-3">
+      <div class="col-sm-4">
         <ul>
           <li><h4>Settings</h4></li>
-          <li>Hourly rate <input id="rate-amount" class="foo" onclick="this.select();" type="text" type="number" value="50"><span class="currency pull-right"></span></li>
-          <li>Cost per mile <input id="mile-amount" class="foo" onclick="this.select();" type="text" type="number" value="10"><span class="currency pull-right"></span></li>
+          <li>
+            <div class="row">
+              <div class="col-sm-6">Hourly rate</div>
+              <div class="col-sm-6">
+                <div class="money-input">
+                  <span class="currency"></span>
+                  <input id="rate-amount" class="form-control" onclick="this.select();" type="text" type="number" value="50">
+                </div>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="row">
+              <div class="col-sm-6">Cost per mile</div>
+              <div class="col-sm-6">
+                <div class="money-input">
+                  <span class="currency"></span>
+                  <input id="mile-amount" class="form-control" onclick="this.select();" type="text" type="number" value="12">
+                </div>
+              </div>
+            </div>
+          </li>
           <li>Taxable <input id="tax-check" class="pull-right" type="checkbox"></li>
-          <li id="tax-input" style="display:none;">Tax <span class="pull-right">%</span><input id="tax-amount" class="foo" onclick="this.select();" type="text" type="number" value="0"></li>
+          <li id="tax-input" style="display:none;">
+            <div class="row">
+              <div class="col-sm-6">Tax</div>
+              <div class="col-sm-6">
+                <div class="money-input">
+                  <span class="currency"></span>
+                  <input id="tax-amount" class="form-control" onclick="this.select();" type="text" type="number" value="0">
+                </div>
+              </div>
+            </div>
+          </li>
         </ul>
       </div>
     </div>
@@ -114,7 +215,7 @@ margin: 10px;
 $(document).ready(function(){
 
   $('.currency').html('$');
-  
+
   $('#invoice select').on('change', function () {
   	if ($(this).val() == 0) {
   	  $(this).siblings(".foo").removeClass("fixed quantity mileage");
@@ -130,57 +231,57 @@ $(document).ready(function(){
   		$(this).siblings(".foo").addClass("mileage");
   	}
   });
-  
+
   $('#tax-check').on('change', function () {
   	$('#tax-input').slideToggle();
   	$('#tax-bar').slideToggle();
   });
-  
+
   var $form = $('.expenses'),
-  
+
   $flatcalc = $form.find('.foo');
-  
+
   $('#invoice').on('keyup change', function() {
-  
+
     //Get houlry rate from input
     var rate = Number($('#rate-amount').val());
-    
+
     //Get cost per mile from input
     var mile = Number($('#mile-amount').val());
-    
+
     //Get tax from input
     var tax = Number($('#tax-amount').val());
-    
+
     //Print the tax
     $('#tax-print').html('Tax ' + tax + '%');
-    
+
     var amount = 0;
   	$flatcalc.each(function () {
   		var value = Number($(this).val());
   		if (!isNaN(value)) amount += value;
   	});
-  	
+
   	var fee = (amount / 100 * tax);
-  	
+
   	$('.fee').text(fee.toFixed(2));
-  	
+
   	$('.total').text((amount + fee).toFixed(2));
-  	
+
   	var fixed = 0;
-  	
+
   	$('.fixed').each(function () {
   		var value = Number($(this).val());
   		if (!isNaN(value)) fixed += value;
   	});
-  	
+
   	var combined = amount - fixed;
-  	
+
   	var fixedtot = combined / 100 * tax;
-  	
+
   	$('.extra').text((combined+ fixedtot).toFixed(2));
-  	
+
   });
-  
+
   //Errorcheck
   $('.header').html('jQuery invoice generator');
 
