@@ -16,13 +16,13 @@ list-style-type: none;
 margin: 0;
 padding: 0;
 }
+#invoice h3 {
+margin: 0 0 10px;
+}
 /* Style rows of invoice */
 #invoice li {
 line-height: 32px;
 border-bottom: solid 1px #dbdbdb;
-}
-#invoice li:last-child {
-border-bottom: none;
 }
 /* Style input boxes for numbers */
 #invoice .foo {
@@ -33,34 +33,38 @@ text-align: right;
 #invoice input {
 margin: 0 0 10px 0;
 }
-/* Dollar box */
-#invoice .money-input {
+/* Type boxes */
+#invoice .type-input {
 position: relative;
 }
-#invoice .money-input input {
+#invoice .type-input .currency, #invoice .type-input .percentage {
+display: none;
+}
+#invoice .type-input.money input {
 padding-left: 20px;
 }
-#invoice .money-input .currency {
+#invoice .type-input.money .currency {
 position:absolute;
+display: inherit;
 color:#BBB;
 left:10px;
 top:1px;
 }
-/* Tax box */
-#invoice .tax-input {
-position: relative;
-}
-#invoice .tax-input input {
+#invoice .type-input.tax input {
 padding-right: 20px;
 }
-#invoice .tax-input span {
+#invoice .type-input.tax .percentage {
 position:absolute;
+display: inherit;
 color:#BBB;
 right:10px;
 top:1px;
 }
 #invoice .caret {
 display: none;
+}
+#invoice input[type=checkbox] {
+margin: 10px 0;
 }
 
 /* Theme Start */
@@ -72,7 +76,6 @@ text-rendering: optimizeLegibility;
 body {
 background: #f5f5f5;
 color: #555555;
-padding-top: 30px;
 }
 h1, h2, h3, h4, h5 {
 font-weight: bold;
@@ -84,7 +87,7 @@ background: -webkit-linear-gradient(top, #ffffff, #eeeeee);
 background: -moz-linear-gradient(top, #ffffff, #eeeeee);
 background: -o-linear-gradient(top, #ffffff, #eeeeee);
 background: linear-gradient(to bottom, #ffffff, #eeeeee);
-border: 1px solid #bbbbbb;
+border: 1px solid #CCC;
 border-radius: 4px;
 box-shadow: inset 0 1px 0px rgba(255, 255, 255, 0.4);
 color: #555555;
@@ -128,13 +131,13 @@ border: #DDD solid 1px;
 margin: -9px -15px 20px;
 }
 @media (min-width: 768px) {
-  #invoice #invoice-number {
-  margin-top: 20px;
-  }
   .box {
   margin: 0;
   border-radius: 7px;
   box-shadow: 0px 2px 2px rgba(0,0,0,0.1);
+  }
+  body {
+  padding-top: 30px;
   }
 }
 /* Theme End */
@@ -158,84 +161,59 @@ margin: -9px -15px 20px;
                 </div>
               </div>
             </li>
-            <li id="item-1">
-              <div class="row">
-                <div class="col-lg-7">
-                  <input class="form-control" onclick="this.select()" type="text" value="Item description">
-                </div>
-                <div class="col-xs-6 col-sm-4 col-sm-offset-5 col-lg-3 col-lg-offset-0">
-                  <select class="type">
-                    <option value="0">
-                      Select type
-                    </option>
-                    <option value="1">
-                      Timed
-                    </option>
-                    <option value="2">
-                      Fixed
-                    </option>
-                    <option value="3">
-                      Quantity
-                    </option>
-                    <option value="4">
-                      Mileage
-                    </option>
-                  </select>
-                  <div class="caret"></div>
-                </div>
-                <div class="col-xs-6 col-sm-3 col-lg-2">
-                  <div class="money-input">
-                    <span class="currency"></span>
-                    <input class="form-control" id="tax-amount" onclick="this.select()" type="text" value="0">
+            <ul id="items">
+              <li id="item-1">
+                <div class="row">
+                  <div class="col-lg-7">
+                    <input class="form-control" onclick="this.select()" type="text" value="Item description">
+                  </div>
+                  <div class="col-xs-6 col-sm-4 col-sm-offset-5 col-lg-3 col-lg-offset-0">
+                    <select class="type">
+                      <option value="0">
+                        Timed
+                      </option>
+                      <option value="1">
+                        Fixed
+                      </option>
+                      <option value="2">
+                        Quantity
+                      </option>
+                      <option value="3">
+                        Mileage
+                      </option>
+                    </select>
+                    <div class="caret"></div>
+                  </div>
+                  <div class="col-xs-6 col-sm-3 col-lg-2">
+                    <div class="type-input money">
+                      <span class="currency"></span>
+                      <input class="form-control timed" onclick="this.select()" type="text" value="0">
+                      <span class="percentage">%</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </li>
-            <li id="item-1">
-              <div class="row">
-                <div class="col-lg-7">
-                  <input class="form-control" onclick="this.select()" type="text" value="Item description">
-                </div>
-                <div class="col-xs-6 col-sm-4 col-sm-offset-5 col-lg-3 col-lg-offset-0">
-                  <select class="type">
-                    <option value="0">
-                      Select type
-                    </option>
-                    <option value="1">
-                      Timed
-                    </option>
-                    <option value="2">
-                      Fixed
-                    </option>
-                    <option value="3">
-                      Quantity
-                    </option>
-                    <option value="4">
-                      Mileage
-                    </option>
-                  </select>
-                  <div class="caret"></div>
-                </div>
-                <div class="col-xs-6 col-sm-3 col-lg-2">
-                  <div class="money-input">
-                    <span class="currency"></span>
-                    <input class="form-control" id="tax-amount" onclick="this.select()" type="text" value="0">
-                  </div>
-                </div>
-              </div>
-            </li>
+              </li>
+            </ul>
             <li id="tax-bar" style="display:none"><span id="tax-print">Tax 0%</span><span class="fee pull-right">0</span><span class="currency pull-right"></span></li>
             <li>
               <div class="row">
-                <div class="col-xs-5">
+                <div class="col-xs-6">
                   <h3>Total cost</h3>
                 </div>
-                <div class="col-xs-7">
+                <div class="col-xs-6">
                   <h3></span><span class="total pull-right">0.00</span><span class="currency pull-right"></h3>
                 </div>
               </div>
             </li>
-          </ul><input class="btn btn-primary btn-block" type="submit" value="Save as invoice">
+          </ul>
+          <div class="row">
+            <div class="col-xs-6">
+              <input class="btn btn-block" type="submit" value="Save for later">
+            </div>
+            <div class="col-xs-6">
+              <input class="btn btn-primary btn-block" type="submit" value="Submit">
+            </div>
+          </div>
         </div>
       </div>
       <div class="col-sm-4">
@@ -277,7 +255,7 @@ margin: -9px -15px 20px;
                 Hourly rate
               </div>
               <div class="col-sm-6">
-                <div class="money-input">
+                <div class="type-input money">
                   <span class="currency"></span>
                   <input class="form-control" id="rate-amount" onclick="this.select()" type="text" value="50">
                 </div>
@@ -290,7 +268,7 @@ margin: -9px -15px 20px;
                 Cost per mile
               </div>
               <div class="col-sm-6">
-                <div class="money-input">
+                <div class="type-input money">
                   <span class="currency"></span>
                   <input class="form-control" id="mile-amount" onclick="this.select()" type="text" value="12">
                 </div>
@@ -300,22 +278,22 @@ margin: -9px -15px 20px;
           <li>
             <div class="row">
               <div class="col-sm-6">
-                Taxable?
+                Taxable
               </div>
               <div class="col-sm-6">
                 <input class="pull-right" id="tax-check" type="checkbox">
               </div>
             </div> 
           </li>
-          <li id="tax-input" style="display:none">
+          <li id="type-input" style="display:none">
             <div class="row">
               <div class="col-sm-6">
                 Tax
               </div>
               <div class="col-sm-6">
-                <div class="tax-input">
+                <div class="type-input tax">
                   <input class="form-control" id="tax-amount" onclick="this.select()" type="text" value="0">
-                  <span class="pull-right">%</span>
+                  <span class="percentage">%</span>
                 </div>
               </div>
             </div>
@@ -348,7 +326,7 @@ $(document).ready(function() {
     }
   });
   $('#tax-check').on('change', function() {
-    $('#tax-input').slideToggle();
+    $('#type-input').slideToggle();
     $('#tax-bar').slideToggle();
   });
   var $form = $('.expenses'),
