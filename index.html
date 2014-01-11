@@ -34,26 +34,26 @@ text-align: right;
 margin: 0 0 10px 0;
 }
 /* Type boxes */
-#invoice .type-input {
+#invoice .input-type {
 position: relative;
 }
-#invoice .type-input .currency, #invoice .type-input .percentage {
+#invoice .input-type .currency, #invoice .input-type .percentage {
 display: none;
 }
-#invoice .type-input.money input {
+#invoice .input-type.money input {
 padding-left: 20px;
 }
-#invoice .type-input.money .currency {
+#invoice .input-type.money .currency {
 position:absolute;
 display: inherit;
 color:#BBB;
 left:10px;
 top:1px;
 }
-#invoice .type-input.tax input {
+#invoice .input-type.tax input {
 padding-right: 20px;
 }
-#invoice .type-input.tax .percentage {
+#invoice .input-type.tax .percentage {
 position:absolute;
 display: inherit;
 color:#BBB;
@@ -185,9 +185,9 @@ margin: -9px -15px 20px;
                     <div class="caret"></div>
                   </div>
                   <div class="col-xs-6 col-sm-3 col-lg-2">
-                    <div class="type-input money">
+                    <div class="input-type">
                       <span class="currency"></span>
-                      <input class="form-control timed" onclick="this.select()" type="text" value="0">
+                      <input class="form-control foo timed" onclick="this.select()" type="text" value="0">
                       <span class="percentage">%</span>
                     </div>
                   </div>
@@ -255,7 +255,7 @@ margin: -9px -15px 20px;
                 Hourly rate
               </div>
               <div class="col-sm-6">
-                <div class="type-input money">
+                <div class="input-type money">
                   <span class="currency"></span>
                   <input class="form-control" id="rate-amount" onclick="this.select()" type="text" value="50">
                 </div>
@@ -268,7 +268,7 @@ margin: -9px -15px 20px;
                 Cost per mile
               </div>
               <div class="col-sm-6">
-                <div class="type-input money">
+                <div class="input-type money">
                   <span class="currency"></span>
                   <input class="form-control" id="mile-amount" onclick="this.select()" type="text" value="12">
                 </div>
@@ -285,13 +285,13 @@ margin: -9px -15px 20px;
               </div>
             </div> 
           </li>
-          <li id="type-input" style="display:none">
+          <li id="input-type" style="display:none">
             <div class="row">
               <div class="col-sm-6">
                 Tax
               </div>
               <div class="col-sm-6">
-                <div class="type-input tax">
+                <div class="input-type tax">
                   <input class="form-control" id="tax-amount" onclick="this.select()" type="text" value="0">
                   <span class="percentage">%</span>
                 </div>
@@ -309,30 +309,32 @@ margin: -9px -15px 20px;
 $(document).ready(function() {
   $('.currency').html('$');
   $('#invoice select').on('change', function() {
+    var foo = $(this).closest(".row").find(".foo");
+    var inputType = $(this).closest(".row").find(".input-type");
     if ($(this).val() == 0) {
-      $(this).siblings(".foo").removeClass("fixed quantity mileage");
-      $(this).siblings(".foo").addClass("timed");
+      foo.removeClass("fixed quantity mileage").addClass("timed");
+      inputType.removeClass("money");
     }
-    if ($(this).val() == 1) {
-      $(this).siblings(".foo").removeClass("timed quantity mileage");
-      $(this).siblings(".foo").addClass("fixed");
+    else if ($(this).val() == 1) {
+      foo.removeClass("timed quantity mileage").addClass("fixed");
+      inputType.addClass("money");
     }
-    if ($(this).val() == 2) {
-      $(this).siblings(".foo").removeClass("fixed timed mileage");
-      $(this).siblings(".foo").addClass("quantity");
+    else if ($(this).val() == 2) {
+      foo.removeClass("fixed timed mileage").addClass("quantity");
+      inputType.removeClass("money");
     } else {
-      $(this).siblings(".foo").removeClass("fixed quantity timed");
-      $(this).siblings(".foo").addClass("mileage");
+      foo.removeClass("fixed quantity timed").addClass("mileage");
+      inputType.removeClass("money");
     }
   });
   $('#tax-check').on('change', function() {
-    $('#type-input').slideToggle();
+    $('#input-type').slideToggle();
     $('#tax-bar').slideToggle();
   });
   var $form = $('.expenses'),
   $flatcalc = $form.find('.foo');
   $('#invoice').on('keyup change', function() {
-    //Get houlry rate from input
+    //Get hourly rate from input
     var rate = Number($('#rate-amount').val());
     //Get cost per mile from input
     var mile = Number($('#mile-amount').val());
