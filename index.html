@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>jQuery invoice generator</title>
+<title>Stripe Invoice Generator</title>
 <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
 <style>
 
@@ -29,9 +29,17 @@ border-bottom: solid 1px #dbdbdb;
 float: right;
 text-align: right;
 }
-/* Checkbox centering */
+/* Input margins */
 #invoice input {
-margin: 0 0 10px 0;
+margin: 0px 0 10px 0;
+}
+#invoice input[type=checkbox] {
+margin: -23px 0 0;
+}
+@media (min-width: 768px) {
+  #invoice input[type=checkbox] {
+  margin: 8px 0 0;
+  }
 }
 /* Type boxes */
 #invoice .input-type {
@@ -63,8 +71,8 @@ top:1px;
 #invoice .caret {
 display: none;
 }
-#invoice input[type=checkbox] {
-margin: 10px 0;
+#invoice-number {
+  text-align: right;
 }
 
 /* Theme Start */
@@ -108,8 +116,7 @@ color: white;
 text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
 }
 select {
-padding: 10px;
-font-size: 12px;
+padding: 9px;
 line-height: 1;
 width: 100%;
 -moz-appearance: none;
@@ -118,7 +125,7 @@ width: 100%;
 #invoice .caret {
 position: absolute;
 right: 25px;
-top:15px;
+top:17px;
 display: inherit;
 }
 #invoice li {
@@ -153,11 +160,11 @@ margin: -9px -15px 20px;
           <ul>
             <li>
               <div class="row">
-                <div class="col-sm-8 col-lg-9">
+                <div class="col-sm-9 col-lg-10">
                   <h3 class="header"></h3>
                 </div>
-                <div class="col-sm-4 col-lg-3">
-                  <input class="form-control" id="invoice-number" onclick="this.select()" type="text" value="Invoice No#">
+                <div class="col-sm-3 col-lg-2">
+                  <input class="form-control" id="invoice-number" onclick="this.select()" type="text" value="Invoice #">
                 </div>
               </div>
             </li>
@@ -225,24 +232,21 @@ margin: -9px -15px 20px;
                 Currency
               </div>
               <div class="col-sm-6">
-                <select class="type">
-                  <option value="0">
+                <select id="currency" class="type">
+                  <option value="USD">
                     USD $
                   </option>
-                  <option value="1">
+                  <option value="CNY">
                     CNY ¥
                   </option>
-                  <option value="1">
+                  <option value="EUR">
                     EUR €
                   </option>
-                  <option value="2">
+                  <option value="GBP">
                     GBP £
                   </option>
-                  <option value="3">
+                  <option value="JPY">
                     JPY ¥
-                  </option>
-                  <option value="4">
-                    BIT ฿
                   </option>
                 </select>
                 <span class="caret"></span>
@@ -285,7 +289,7 @@ margin: -9px -15px 20px;
               </div>
             </div> 
           </li>
-          <li id="input-type" style="display:none">
+          <li id="tax-input" style="display:none">
             <div class="row">
               <div class="col-sm-6">
                 Tax
@@ -307,7 +311,31 @@ margin: -9px -15px 20px;
 <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
 <script>
 $(document).ready(function() {
-  $('.currency').html('$');
+
+  function setCurrency() {
+    //Get currency from select input
+    var currency = $('#currency').val();
+    //Set currencySign var to be safe
+    var currencySign;
+    //Get currencySign based on currency selected
+    if (currency == 'USD') {
+      currencySign = '$';
+    } else if (currency == 'CNY') {
+      currencySign = '¥';
+    } else if (currency == 'EUR') {
+      currencySign = '€';
+    } else if (currency == 'GBP') {
+      currencySign = '£';
+    } else {
+      currencySign = '¥';
+    }
+    //Print currency on form
+    $('.currency').html(currencySign); 
+  }
+  //Set initial currency
+  setCurrency();
+  
+  //Change input box on item to type of input
   $('#invoice select').on('change', function() {
     var foo = $(this).closest(".row").find(".foo");
     var inputType = $(this).closest(".row").find(".input-type");
@@ -327,13 +355,18 @@ $(document).ready(function() {
       inputType.removeClass("money");
     }
   });
+
   $('#tax-check').on('change', function() {
-    $('#input-type').slideToggle();
-    $('#tax-bar').slideToggle();
+    $('#tax-input, #tax-bar').slideToggle();
   });
+
   var $form = $('.expenses'),
+
   $flatcalc = $form.find('.foo');
+
   $('#invoice').on('keyup change', function() {
+    //Set new currency
+    setCurrency();
     //Get hourly rate from input
     var rate = Number($('#rate-amount').val());
     //Get cost per mile from input
@@ -359,8 +392,10 @@ $(document).ready(function() {
     var fixedtot = combined / 100 * tax;
     $('.extra').text((combined + fixedtot).toFixed(2));
   });
+  
   //Errorcheck
-  $('.header').html('Invoice Generator');
+  $('.header').html('Stripe Invoice Generator');
+
 });
 </script>
 </body>
