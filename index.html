@@ -112,6 +112,25 @@ display: inline-block;
 font-weight: bold;
 outline: none;
 text-shadow: 0 1px 0 white;
+transition: all 0.5s;
+}
+.btn:hover, select:hover {
+color: #8d8d8d;
+background: #fcfcfc;
+background: -webkit-linear-gradient(top, #ffffff, #f3f3f3);
+background: -moz-linear-gradient(top, #ffffff, #f3f3f3);
+background: -o-linear-gradient(top, #ffffff, #f3f3f3);
+background: linear-gradient(to bottom, #ffffff, #f3f3f3);
+}
+.btn:active, select:active {
+color: #ffffff;
+text-shadow: 0 1px 3px #888;
+background: #d0d0d0;
+box-shadow: inset 0px 1px 1px #cecece;
+background: -webkit-linear-gradient(top, #cdcdcd, #e1e1e1);
+background: -moz-linear-gradient(top, #cdcdcd, #e1e1e1);
+background: -o-linear-gradient(top, #cdcdcd, #e1e1e1);
+background: linear-gradient(top, #cdcdcd, #e1e1e1);
 }
 .btn-primary {
 background: #1385e5;
@@ -122,6 +141,24 @@ background: linear-gradient(to bottom, #53b2fc, #1385e5);
 border-color: #075fa9;
 color: white;
 text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+transition: all 0.5s;
+}
+.btn-primary:hover {
+background: #fcfcfc;
+color: white;
+background: -webkit-linear-gradient(top, #6ebefa, #1385e5);
+background: -moz-linear-gradient(top, #6ebefa, #1385e5);
+background: -o-linear-gradient(top, #6ebefa, #1385e5);
+background: linear-gradient(to bottom, #6ebefa, #1385e5);
+}
+.btn-primary:active {
+text-shadow: 0 -1px 0px #255f95;
+background: #1977be;
+box-shadow: inset 0px 1px 1px #1a4d7e;
+background: -webkit-linear-gradient(top, #1977be, #1385e5);
+background: -moz-linear-gradient(top, #1977be, #1385e5);
+background: -o-linear-gradient(top, #1977be, #1385e5);
+background: linear-gradient(top, #1977be, #1385e5);
 }
 select {
 padding: 9px;
@@ -196,10 +233,10 @@ margin: -9px -15px 20px;
             </li>
           </ul>
           <div class="row">
-            <div class="col-xs-6">
-              <input class="btn btn-block" type="submit" value="Save for later">
+            <div class="col-xs-4">
+              <input class="btn btn-block" type="submit" value="Reset">
             </div>
-            <div class="col-xs-6">
+            <div class="col-xs-8">
               <input class="btn btn-primary btn-block" type="submit" value="Submit">
             </div>
           </div>
