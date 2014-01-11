@@ -80,10 +80,12 @@ text-align: right;
 #invoice #item-total {
 text-align: right;
 }
+#invoice .plus {
+  margin-top: -20px;
+}
 
 /* Theme Start */
 * {
-vertical-align: baseline;
 text-rendering: optimizeLegibility;
 -webkit-font-smoothing: antialiased;
 }
@@ -136,7 +138,7 @@ display: inherit;
 }
 .box {
 background: #fff;
-padding: 0 20px 10px;
+padding: 0 20px;
 border: #DDD solid 1px;
 margin: -9px -15px 20px;
 }
@@ -174,12 +176,14 @@ margin: -9px -15px 20px;
             <ul id="items">
 
             </ul>
-            <div class="row">
-              <div class="col-xs-12">
-                <div class="btn btn-sm btn-block plus">Add item</div>
+            <li>
+              <div class="row">
+                <div class="col-xs-12">
+                  <div class="btn btn-sm btn-block plus">Add item</div>
+                </div>
               </div>
-            </div>
-            <li id="tax-bar" style="display:none"><span id="tax-print">Tax 0%</span><span class="fee pull-right">0</span><span class="currency pull-right"></span></li>
+            </li>
+            <li id="tax-bar" style="display:none"><span id="tax-print">Tax 0%</span><span class="taxed pull-right">0</span><span class="currency pull-right"></span></li>
             <li>
               <div class="row">
                 <div class="col-xs-6">
@@ -322,15 +326,17 @@ $(document).ready(function () {
       "<\/div>"+
     "<\/li>";
       
-    //Add first item on load
+    //Add item
     function appendItem() {
       $("#items").append($item);
+      setCurrency();
     }
-    appendItem();
     //When plus is clicked add another item
     $('.plus').click(function () {
       appendItem();
     });
+    //Append first item on load
+    appendItem();
 
     function setCurrency() {
       //Get currency from select input
@@ -352,6 +358,9 @@ $(document).ready(function () {
       //Print currency on form
       $('.currency').html(currencySign);
     }
+    $('#currency').on('change', function(){
+      setCurrency();
+    });
     //Set initial currency
     setCurrency();
 
@@ -374,39 +383,52 @@ $(document).ready(function () {
       }
     });
 
+    //Open tax setting on selection of tax checkbox
     $('#tax-check').on('change', function () {
       $('#tax-input, #tax-bar').slideToggle();
     });
-
-    var $flatcalc = $('.expenses').find('.foo');
-
-    $('#invoice').on('keyup change', function () {
-      //Set new currency
-      setCurrency();
+    
+    //Settings
+    function settings() {
       //Get hourly rate from input
       var rate = Number($('#rate-amount').val());
       //Get cost per mile from input
       var mile = Number($('#mile-amount').val());
       //Get tax from input
       var tax = Number($('#tax-amount').val());
-      //Print the tax
+      //Print the tax percentage
       $('#tax-print').html('Tax ' + tax + '%');
-      var amount = 0;
-      $flatcalc.each(function () {
-        var value = Number($(this).val());
-        if (!isNaN(value)) amount += value;
-      });
-      var fee = (amount / 100 * tax);
-      $('.fee').text(fee.toFixed(2));
-      $('.total').text((amount + fee).toFixed(2));
-      var fixed = 0;
-      $('.fixed').each(function () {
-        var value = Number($(this).val());
-        if (!isNaN(value)) fixed += value;
-      });
-      var combined = amount - fixed;
-      var fixedtot = combined / 100 * tax;
-      $('.extra').text((combined + fixedtot).toFixed(2));
+    }
+    //Load initial settings
+    settings();
+    
+    //Function for form calculation
+    function calcTotal() {
+      //Add up all items
+    	var subtotal = 0;
+    	$('#invoice').find('.subtotal').each(function () {
+    		var value = Number($(this).val());
+    		if (!isNaN(value)) subtotal += value;
+    	});
+      //Print subtotal
+      $('.subtotal').html(subtotal);
+      //Calculate tax
+      var taxed = (subtotal / 100 * tax);
+      //Print tax
+      $('.taxed').html(taxed);
+      //Add up tax to subtotal
+      var total = (subtotal + tax);
+      //Print total
+      $('.total').html(total);
+    }
+    //Initial calculation on load
+    calcTotal();
+
+    $('#invoice').on('keyup change', function () {
+      //Refresh settings
+      settings();
+      //Recalculate form
+      calcTotal();
     });
 
     //Errorcheck
