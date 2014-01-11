@@ -169,38 +169,15 @@ margin: -9px -15px 20px;
               </div>
             </li>
             <ul id="items">
-              <li id="item-1">
-                <div class="row">
-                  <div class="col-lg-7">
-                    <input class="form-control" onclick="this.select()" type="text" value="Item description">
-                  </div>
-                  <div class="col-xs-6 col-sm-4 col-sm-offset-5 col-lg-3 col-lg-offset-0">
-                    <select class="type">
-                      <option value="0">
-                        Timed
-                      </option>
-                      <option value="1">
-                        Fixed
-                      </option>
-                      <option value="2">
-                        Quantity
-                      </option>
-                      <option value="3">
-                        Mileage
-                      </option>
-                    </select>
-                    <div class="caret"></div>
-                  </div>
-                  <div class="col-xs-6 col-sm-3 col-lg-2">
-                    <div class="input-type">
-                      <span class="currency"></span>
-                      <input class="form-control foo timed" onclick="this.select()" type="text" value="0">
-                      <span class="percentage">%</span>
-                    </div>
-                  </div>
-                </div>
-              </li>
+
             </ul>
+            <div class="row">
+              <div class="col-xs-12">
+                <div class="pull-right">
+                  <div class="btn plus">+</div>
+                </div>
+              </div>
+            </div>
             <li id="tax-bar" style="display:none"><span id="tax-print">Tax 0%</span><span class="fee pull-right">0</span><span class="currency pull-right"></span></li>
             <li>
               <div class="row">
@@ -310,91 +287,99 @@ margin: -9px -15px 20px;
 <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
 <script>
-$(document).ready(function() {
+$(document).ready(function () {
 
-  function setCurrency() {
-    //Get currency from select input
-    var currency = $('#currency').val();
-    //Set currencySign var to be safe
-    var currencySign;
-    //Get currencySign based on currency selected
-    if (currency == 'USD') {
-      currencySign = '$';
-    } else if (currency == 'CNY') {
-      currencySign = '¥';
-    } else if (currency == 'EUR') {
-      currencySign = '€';
-    } else if (currency == 'GBP') {
-      currencySign = '£';
-    } else {
-      currencySign = '¥';
+    //Item layout
+    var $item = "<li class=\"item\"><div class=\"row\"><div class=\"col-lg-7\"><input class=\"form-control\" onclick=\"this.select()\" type=\"text\" value=\"Item description\"><\/div><div class=\"col-xs-6 col-sm-4 col-sm-offset-5 col-lg-3 col-lg-offset-0\"><select class=\"type\"><option value=\"0\"> Timed <\/option><option value=\"1\"> Fixed <\/option><option value=\"2\"> Quantity <\/option><option value=\"3\"> Mileage <\/option><\/select><div class=\"caret\"><\/div><\/div><div class=\"col-xs-6 col-sm-3 col-lg-2\"><div class=\"input-type\"><span class=\"currency\"><\/span><input class=\"form-control foo timed\" onclick=\"this.select()\" type=\"text\" value=\"0\"><span class=\"percentage\">%<\/span><\/div><\/div><\/div><\/li>";
+    //Add first item on load
+    function appendItem() {
+        $("#items").append($item);
     }
-    //Print currency on form
-    $('.currency').html(currencySign); 
-  }
-  //Set initial currency
-  setCurrency();
-  
-  //Change input box on item to type of input
-  $('#invoice select').on('change', function() {
-    var foo = $(this).closest(".row").find(".foo");
-    var inputType = $(this).closest(".row").find(".input-type");
-    if ($(this).val() == 0) {
-      foo.removeClass("fixed quantity mileage").addClass("timed");
-      inputType.removeClass("money");
+    appendItem();
+    //When plus is clicked add another item
+    $('.plus').click(function () {
+        appendItem();
+    });
+
+    function setCurrency() {
+        //Get currency from select input
+        var currency = $('#currency').val();
+        //Set currencySign var to be safe
+        var currencySign;
+        //Get currencySign based on currency selected
+        if (currency == 'USD') {
+            currencySign = '$';
+        } else if (currency == 'CNY') {
+            currencySign = '¥';
+        } else if (currency == 'EUR') {
+            currencySign = '€';
+        } else if (currency == 'GBP') {
+            currencySign = '£';
+        } else {
+            currencySign = '¥';
+        }
+        //Print currency on form
+        $('.currency').html(currencySign);
     }
-    else if ($(this).val() == 1) {
-      foo.removeClass("timed quantity mileage").addClass("fixed");
-      inputType.addClass("money");
-    }
-    else if ($(this).val() == 2) {
-      foo.removeClass("fixed timed mileage").addClass("quantity");
-      inputType.removeClass("money");
-    } else {
-      foo.removeClass("fixed quantity timed").addClass("mileage");
-      inputType.removeClass("money");
-    }
-  });
-
-  $('#tax-check').on('change', function() {
-    $('#tax-input, #tax-bar').slideToggle();
-  });
-
-  var $form = $('.expenses'),
-
-  $flatcalc = $form.find('.foo');
-
-  $('#invoice').on('keyup change', function() {
-    //Set new currency
+    //Set initial currency
     setCurrency();
-    //Get hourly rate from input
-    var rate = Number($('#rate-amount').val());
-    //Get cost per mile from input
-    var mile = Number($('#mile-amount').val());
-    //Get tax from input
-    var tax = Number($('#tax-amount').val());
-    //Print the tax
-    $('#tax-print').html('Tax ' + tax + '%');
-    var amount = 0;
-    $flatcalc.each(function() {
-      var value = Number($(this).val());
-      if (!isNaN(value)) amount += value;
+
+    //Change input box on item to type of input
+    $('#invoice select').on('change', function () {
+        var foo = $(this).closest(".row").find(".foo");
+        var inputType = $(this).closest(".row").find(".input-type");
+        if ($(this).val() == 0) {
+            foo.removeClass("fixed quantity mileage").addClass("timed");
+            inputType.removeClass("money");
+        } else if ($(this).val() == 1) {
+            foo.removeClass("timed quantity mileage").addClass("fixed");
+            inputType.addClass("money");
+        } else if ($(this).val() == 2) {
+            foo.removeClass("fixed timed mileage").addClass("quantity");
+            inputType.removeClass("money");
+        } else {
+            foo.removeClass("fixed quantity timed").addClass("mileage");
+            inputType.removeClass("money");
+        }
     });
-    var fee = (amount / 100 * tax);
-    $('.fee').text(fee.toFixed(2));
-    $('.total').text((amount + fee).toFixed(2));
-    var fixed = 0;
-    $('.fixed').each(function() {
-      var value = Number($(this).val());
-      if (!isNaN(value)) fixed += value;
+
+    $('#tax-check').on('change', function () {
+        $('#tax-input, #tax-bar').slideToggle();
     });
-    var combined = amount - fixed;
-    var fixedtot = combined / 100 * tax;
-    $('.extra').text((combined + fixedtot).toFixed(2));
-  });
-  
-  //Errorcheck
-  $('.header').html('Stripe Invoice Generator');
+
+    var $flatcalc = $('.expenses').find('.foo');
+
+    $('#invoice').on('keyup change', function () {
+        //Set new currency
+        setCurrency();
+        //Get hourly rate from input
+        var rate = Number($('#rate-amount').val());
+        //Get cost per mile from input
+        var mile = Number($('#mile-amount').val());
+        //Get tax from input
+        var tax = Number($('#tax-amount').val());
+        //Print the tax
+        $('#tax-print').html('Tax ' + tax + '%');
+        var amount = 0;
+        $flatcalc.each(function () {
+            var value = Number($(this).val());
+            if (!isNaN(value)) amount += value;
+        });
+        var fee = (amount / 100 * tax);
+        $('.fee').text(fee.toFixed(2));
+        $('.total').text((amount + fee).toFixed(2));
+        var fixed = 0;
+        $('.fixed').each(function () {
+            var value = Number($(this).val());
+            if (!isNaN(value)) fixed += value;
+        });
+        var combined = amount - fixed;
+        var fixedtot = combined / 100 * tax;
+        $('.extra').text((combined + fixedtot).toFixed(2));
+    });
+
+    //Errorcheck
+    $('.header').html('Stripe Invoice Generator');
 
 });
 </script>
