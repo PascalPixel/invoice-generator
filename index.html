@@ -59,9 +59,6 @@ color:#BBB;
 right:10px;
 top:1px;
 }
-#invoice h3 {
-margin: 0;
-}
 #invoice .caret {
 display: none;
 }
@@ -119,6 +116,7 @@ width: 100%;
 position: absolute;
 right: 25px;
 top:15px;
+display: inherit;
 }
 #invoice li {
 border-bottom: dashed 1px #dbdbdb;
@@ -127,9 +125,12 @@ border-bottom: dashed 1px #dbdbdb;
 background: #fff;
 padding: 0 20px 10px;
 border: #DDD solid 1px;
-margin: -9px -19px 20px;
+margin: -9px -15px 20px;
 }
 @media (min-width: 768px) {
+  #invoice #invoice-number {
+  margin-top: 20px;
+  }
   .box {
   margin: 0;
   border-radius: 7px;
@@ -223,7 +224,7 @@ margin: -9px -19px 20px;
                 </div>
               </div>
             </li>
-            <li id="tax-bar" style="display:none"><span id="tax-print">0% tax</span><span class="fee pull-right">0</span><span class="pull-right">$</span></li>
+            <li id="tax-bar" style="display:none"><span id="tax-print">Tax 0%</span><span class="fee pull-right">0</span><span class="currency pull-right"></span></li>
             <li>
               <div class="row">
                 <div class="col-xs-5">
@@ -239,8 +240,36 @@ margin: -9px -19px 20px;
       </div>
       <div class="col-sm-4">
         <ul>
+          <h4>Settings</h4>
           <li>
-            <h4>Settings</h4>
+            <div class="row">
+              <div class="col-sm-6">
+                Currency
+              </div>
+              <div class="col-sm-6">
+                <select class="type">
+                  <option value="0">
+                    USD $
+                  </option>
+                  <option value="1">
+                    CNY ¥
+                  </option>
+                  <option value="1">
+                    EUR €
+                  </option>
+                  <option value="2">
+                    GBP £
+                  </option>
+                  <option value="3">
+                    JPY ¥
+                  </option>
+                  <option value="4">
+                    BIT ฿
+                  </option>
+                </select>
+                <span class="caret"></span>
+              </div>
+            </div>
           </li>
           <li>
             <div class="row">
@@ -323,7 +352,7 @@ $(document).ready(function() {
     $('#tax-bar').slideToggle();
   });
   var $form = $('.expenses'),
-    $flatcalc = $form.find('.foo');
+  $flatcalc = $form.find('.foo');
   $('#invoice').on('keyup change', function() {
     //Get houlry rate from input
     var rate = Number($('#rate-amount').val());
