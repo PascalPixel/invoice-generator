@@ -354,7 +354,7 @@ var $item =
     "<div id=\"item-input\" class=\"col-xs-4 col-lg-2\">"+
       "<div class=\"input-type\">"+
         "<span class=\"currency\"><\/span>"+
-        "<input class=\"form-control hours\" onclick=\"this.select()\" type=\"text\" value=\"0\">"+
+        "<input class=\"item-input-actual form-control hours\" onclick=\"this.select()\" type=\"text\" value=\"0\">"+
         "<span class=\"percentage\">%<\/span>"+
       "<\/div>"+
     "<\/div>"+
@@ -408,7 +408,7 @@ $('#currency').on('change', function(){
 
 //Change input box on item to type of input
 $('#invoice .item .type').on('change', function () {
-  var itemtotal = $(this).closest(".row").find(".itemtotal");
+  var itemtotal = $(this).closest(".row").find(".item-input-actual");
   var inputType = $(this).closest(".row").find(".input-type");
   if ($(this).val() == 0) {
     itemtotal.removeClass("fixed quantity mileage").addClass("hours");
@@ -423,6 +423,7 @@ $('#invoice .item .type').on('change', function () {
     itemtotal.removeClass("fixed quantity hours").addClass("mileage");
     inputType.removeClass("money");
   }
+  calcTotal();
 });
 
 //Open tax setting on selection of tax checkbox
@@ -462,12 +463,19 @@ function calcHours() {
     $(this).closest(".row").find('.itemtotal').html((($(this).val()) * rate));
   });
 }
+//Function for fixed cost
+function calcFixed() {
+  $('#invoice').find('.fixed').each(function(){
+    $(this).closest(".row").find('.itemtotal').html($(this).val());
+  });
+}
 
 //Function for form calculation
 function calcTotal() {
   setCurrency();
   settings();
   calcHours();
+  calcFixed();
   //Add up all items
 	var subtotal = 0;
 	$('#invoice').find('.itemtotal').each(function () {
