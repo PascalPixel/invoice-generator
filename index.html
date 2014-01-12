@@ -6,7 +6,6 @@
 <title>Bootstrap Invoice Generator</title>
 <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
 <style>
-
 /* Remove list styling on invoice */
 #invoice .row {
 padding: 20px 0 10px;
@@ -28,7 +27,7 @@ border-bottom: solid 1px #dbdbdb;
 border-bottom-style: dashed;
 }
 /* Style input boxes for numbers */
-#invoice .foo {
+#invoice .itemtotal {
 float: right;
 text-align: right;
 }
@@ -112,7 +111,6 @@ display: inline-block;
 font-weight: bold;
 outline: none;
 text-shadow: 0 1px 0 white;
-transition: all 0.5s;
 }
 .btn:hover, select:hover {
 color: #8d8d8d;
@@ -141,7 +139,6 @@ background: linear-gradient(to bottom, #53b2fc, #1385e5);
 border-color: #075fa9;
 color: white;
 text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
-transition: all 0.5s;
 }
 .btn-primary:hover {
 background: #fcfcfc;
@@ -190,7 +187,6 @@ margin: -9px -15px 20px;
   }
 }
 /* Theme End */
-
 </style>
 </head>
 <body>
@@ -214,13 +210,20 @@ margin: -9px -15px 20px;
             </ul>
             <li>
               <div class="row">
-                <div class="col-xs-12">
+                <div class="col-xs-4 col-xs-offset-8">
                   <div class="btn btn-sm btn-block plus">Add item</div>
                 </div>
               </div>
             </li>
-            <li id="tax-bar" style="display:none"><span id="subtotal-print">Subtotal</span><span class="subtotal pull-right">0</span></li>
-            <li id="tax-bar" style="display:none"><span id="tax-print">Tax 0%</span><span class="taxed pull-right">0</span><span class="currency pull-right"></span></li>
+            <li id="tax-bar" style="display:none">
+              <span id="subtotal-print">Subtotal</span>
+              <span class="subtotal pull-right">0</span>
+            </li>
+            <li id="tax-bar" style="display:none">
+              <span id="tax-print">Tax 0%</span>
+              <span class="taxed pull-right">0</span>
+              <span class="currency pull-right"></span>
+            </li>
             <li>
               <div class="row">
                 <div class="col-xs-6">
@@ -328,156 +331,168 @@ margin: -9px -15px 20px;
 </div>
 <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/numeral.js/1.4.5/numeral.min.js"></script>
 <script>
 $(document).ready(function () {
 
-  //Item layout
-  var $item =
-  "<li class=\"item\" style=\"display:none;\">"+
-    "<div class=\"row\">"+
-      "<div class=\"col-lg-6\">"+
-        "<input class=\"form-control\" onclick=\"this.select()\" type=\"text\" value=\"Item description\">"+
-      "<\/div>"+
-      "<div class=\"col-xs-4 col-lg-2\">"+
-        "<select class=\"type\">"+
-          "<option value=\"0\"> Hours <\/option>"+
-          "<option value=\"1\"> Fixed <\/option>"+
-          "<option value=\"2\"> Quantity <\/option>"+
-          "<option value=\"3\"> Mileage <\/option>"+
-        "<\/select>"+
-        "<div class=\"caret\"><\/div>"+
-      "<\/div>"+
-      "<div id=\"item-input\" class=\"col-xs-4 col-lg-2\">"+
-        "<div class=\"input-type\">"+
-          "<span class=\"currency\"><\/span>"+
-          "<input class=\"form-control foo\" onclick=\"this.select()\" type=\"text\" value=\"0\">"+
-          "<span class=\"percentage\">%<\/span>"+
-        "<\/div>"+
-      "<\/div>"+
-      "<div id=\"item-total\" class=\"col-xs-4 col-lg-2\">"+
-        "<h4>"+
-          "<span class=\"currency\"><\/span>"+
-          "<span class=\"itemtotal\">0<\/span>"+
-        "<\/h4>"+
+//Item layout
+var $item =
+"<li class=\"item\" style=\"display:none;\">"+
+  "<div class=\"row\">"+
+    "<div class=\"col-lg-6\">"+
+      "<input class=\"form-control\" onclick=\"this.select()\" type=\"text\" value=\"Item description\">"+
+    "<\/div>"+
+    "<div class=\"col-xs-4 col-lg-2\">"+
+      "<select class=\"type\">"+
+        "<option value=\"0\"> Hours <\/option>"+
+        "<option value=\"1\"> Fixed <\/option>"+
+        "<option value=\"2\"> Quantity <\/option>"+
+        "<option value=\"3\"> Mileage <\/option>"+
+      "<\/select>"+
+      "<div class=\"caret\"><\/div>"+
+    "<\/div>"+
+    "<div id=\"item-input\" class=\"col-xs-4 col-lg-2\">"+
+      "<div class=\"input-type\">"+
+        "<span class=\"currency\"><\/span>"+
+        "<input class=\"form-control hours\" onclick=\"this.select()\" type=\"text\" value=\"0\">"+
+        "<span class=\"percentage\">%<\/span>"+
       "<\/div>"+
     "<\/div>"+
-  "<\/li>";
+    "<div id=\"item-total\" class=\"col-xs-4 col-lg-2\">"+
+      "<h4>"+
+        "<span class=\"currency\"><\/span>"+
+        "<span class=\"itemtotal\">0<\/span>"+
+      "<\/h4>"+
+    "<\/div>"+
+  "<\/div>"+
+"<\/li>";
 
-  //Add item
-  function appendItem() {
-    $("#items").append($item);
-    setCurrency();
-  }
-  //When plus is clicked add another item
-  $('.plus').click(function () {
-    appendItem();
-    $("#items").find(".item:last").slideDown("fast");
-  });
-  //Append first item on load
-  appendItem();
-  $("#items").find(".item:last").show();
-
-  //Setting currency
-  function setCurrency() {
-    //Get currency from select input
-    var currency = $('#currency').val();
-    //Set currencySign var to be safe
-    var currencySign;
-    //Get currencySign based on currency selected
-    if (currency == 'USD') {
-      currencySign = '$';
-    } else if (currency == 'CNY') {
-      currencySign = '&yen;';
-    } else if (currency == 'EUR') {
-      currencySign = '&euro;';
-    } else if (currency == 'GBP') {
-      currencySign = '&pound;';
-    } else {
-      currencySign = '&yen;';
-    }
-    //Print currency on form
-    $('.currency').html(currencySign);
-  }
-  $('#currency').on('change', function(){
-    setCurrency();
-  });
-  //Set initial currency
+//Add item
+function appendItem() {
+  $("#items").append($item);
   setCurrency();
+}
+//When plus is clicked add another item
+$('.plus').click(function () {
+  appendItem();
+  $("#items").find(".item:last").slideDown("fast");
+});
+//Append first item on load
+appendItem();
+$("#items").find(".item:last").show();
 
-  //Change input box on item to type of input
-  $('#invoice select').on('change', function () {
-    var foo = $(this).closest(".row").find(".foo");
-    var inputType = $(this).closest(".row").find(".input-type");
-    if ($(this).val() == 0) {
-      foo.removeClass("fixed quantity mileage").addClass("hours");
-      inputType.removeClass("money");
-    } else if ($(this).val() == 1) {
-      foo.removeClass("hours quantity mileage").addClass("fixed");
-      inputType.addClass("money");
-    } else if ($(this).val() == 2) {
-      foo.removeClass("fixed hours mileage").addClass("quantity");
-      inputType.removeClass("money");
-    } else {
-      foo.removeClass("fixed quantity hours").addClass("mileage");
-      inputType.removeClass("money");
-    }
-  });
-
-  //Open tax setting on selection of tax checkbox
-  $('#tax-check').on('change', function () {
-    $('#tax-input, #tax-bar').slideToggle();
-  });
-
-  //Settings
-  function settings() {
-    //Get hourly rate from input
-    var rate = Number($('#rate-amount').val());
-    //Get cost per mile from input
-    var mile = Number($('#mile-amount').val());
-    //Get tax from input
-    var tax = Number($('#tax-amount').val());
-    //Print the tax percentage
-    $('#tax-print').html('Tax ' + tax + '%');
+//Setting currency
+function setCurrency() {
+  //Get currency from select input
+  var currency = $('#currency').val();
+  //Set currencySign var to be safe
+  var currencySign;
+  //Get currencySign based on currency selected
+  if (currency == 'USD') {
+    currencySign = '$';
+  } else if (currency == 'CNY') {
+    currencySign = '&yen;';
+  } else if (currency == 'EUR') {
+    currencySign = '&euro;';
+  } else if (currency == 'GBP') {
+    currencySign = '&pound;';
+  } else {
+    currencySign = '&yen;';
   }
-  //Load initial settings
+  //Print currency on form
+  $('.currency').html(currencySign);
+}
+$('#currency').on('change', function(){
+  setCurrency();
+});
+
+//Change input box on item to type of input
+$('#invoice .item .type').on('change', function () {
+  var itemtotal = $(this).closest(".row").find(".itemtotal");
+  var inputType = $(this).closest(".row").find(".input-type");
+  if ($(this).val() == 0) {
+    itemtotal.removeClass("fixed quantity mileage").addClass("hours");
+    inputType.removeClass("money");
+  } else if ($(this).val() == 1) {
+    itemtotal.removeClass("hours quantity mileage").addClass("fixed");
+    inputType.addClass("money");
+  } else if ($(this).val() == 2) {
+    itemtotal.removeClass("fixed hours mileage").addClass("quantity");
+    inputType.removeClass("money");
+  } else {
+    itemtotal.removeClass("fixed quantity hours").addClass("mileage");
+    inputType.removeClass("money");
+  }
+});
+
+//Open tax setting on selection of tax checkbox
+$('#tax-check').on('change', function () {
+  $('#tax-input, #tax-bar').slideToggle();
+});
+
+//Global variable settings
+var rate;
+var mile;
+var tax;
+//Settings
+function settings() {
+  //Get hourly rate from input
+  rate = Number($('#rate-amount').val());
+  //Get cost per mile from input
+  mile = Number($('#mile-amount').val());
+  //Get tax from input
+  tax = Number($('#tax-amount').val());
+  //Print the tax percentage
+  $('#tax-print').html('Tax ' + tax + '%');
+}
+
+//2 decimal rounding
+function twoDecimals(numberToRound) {
+  return Math.round(numberToRound * 100) / 100;
+}
+
+//Minutes to decimal point
+function minToDec(min) {
+ var minDec = ((min / 3) * 5) / 100;
+}
+
+//Function to calculate based on hours
+function calcHours() {
+  $('#invoice').find('.hours').each(function(){
+    $(this).closest(".row").find('.itemtotal').html((($(this).val()) * rate));
+  });
+}
+
+//Function for form calculation
+function calcTotal() {
+  setCurrency();
   settings();
+  calcHours();
+  //Add up all items
+	var subtotal = 0;
+	$('#invoice').find('.itemtotal').each(function () {
+		var value = parseInt($(this).text());
+		if (!isNaN(value)) subtotal += value;
+	});
+  //Print subtotal - Two decimals for print only
+  $('.subtotal').html(twoDecimals(subtotal));
+  //Calculate tax
+  var taxed = (subtotal / 100 * tax);
+  //Print tax - Two decimals for print only
+  $('.taxed').html(twoDecimals(taxed));
+  //Add up tax to subtotal - Actually round total up to two decimals
+  var total = twoDecimals(subtotal + taxed);
+  //Print total
+  $('.total').html(total);
+}
+//Initial calculation on load
+calcTotal();
 
-  //2 Decimal rounding
-  function roundTo2Decimals(numberToRound) {
-    return Math.round(numberToRound * 100) / 100
-  }
-  
-  //Function for form calculation
-  function calcTotal() {
-    //Get tax from input
-    var tax = Number($('#tax-amount').val());
-    //Add up all items
-  	var subtotal = 0;
-  	$('#invoice').find('.foo').each(function () {
-  		var value = Number($(this).val());
-  		if (!isNaN(value)) subtotal += value;
-  	});
-    //Print subtotal
-    $('.subtotal').html(roundTo2Decimals(subtotal));
-    //Calculate tax
-    var taxed = (subtotal / 100 * tax);
-    //Print tax
-    $('.taxed').html(roundTo2Decimals(taxed));
-    //Add up tax to subtotal
-    var total = roundTo2Decimals(subtotal + taxed);
-    //Print total
-    $('.total').html(total);
-  }
-  //Initial calculation on load
+//On input change recalculate
+$('#invoice').on('keyup', 'input', function () {
+  //Recalculate form
   calcTotal();
-
-  //On input change recalculate
-  $('#invoice').on('keyup', 'input', function () {
-    //Refresh settings
-    settings();
-    //Recalculate form
-    calcTotal();
-  });
+});
 
 });
 </script>
