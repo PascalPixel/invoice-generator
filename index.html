@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Bootstrap Invoice Generator</title>
 <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/1.4.5/numeral.min.js"></script>
 <style>
 /* Remove list styling on invoice */
 #invoice .row {
@@ -209,11 +210,7 @@ margin: -9px -15px 20px;
             <ul id="items">
             </ul>
             <li>
-              <div class="row">
-                <div class="col-xs-4 col-xs-offset-8">
-                  <div class="btn btn-sm btn-block plus">Add item</div>
-                </div>
-              </div>
+              <div class="btn btn-sm btn-block plus">Add item</div>
             </li>
             <li id="tax-bar" style="display:none">
               <span id="subtotal-print">Subtotal</span>
