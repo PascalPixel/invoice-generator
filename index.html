@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bootstrap Invoice Generator</title>
+<title>HTML Invoice Generator</title>
 <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
-<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/1.4.5/numeral.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/numeral.js/1.4.5/numeral.min.js"></script>
 <style>
 /* Remove list styling on invoice */
 #invoice .row {
@@ -197,30 +197,35 @@ margin: -9px -15px 20px;
       <div class="col-sm-8">
         <div class="box">
           <ul>
+            
             <li>
               <div class="row">
                 <div class="col-xs-8 col-sm-9 col-lg-10">
-                  <h3>Bootstrap Invoice Generator</h3>
+                  <h3>HTML Invoice Generator</h3>
                 </div>
                 <div class="col-xs-4 col-sm-3 col-lg-2">
                   <input class="form-control" id="invoice-number" onclick="this.select()" type="text" value="Invoice #">
                 </div>
               </div>
             </li>
-            <ul id="items">
-            </ul>
+            
+            <ul id="items"></ul>
+            
             <li>
               <div class="btn btn-sm btn-block plus">Add item</div>
             </li>
-            <li id="tax-bar" style="display:none">
+            
+            <li class="tax-bar" style="display:none">
               <span id="subtotal-print">Subtotal</span>
               <span class="subtotal pull-right">0</span>
             </li>
-            <li id="tax-bar" style="display:none">
+            
+            <li class="tax-bar" style="display:none">
               <span id="tax-print">Tax 0%</span>
               <span class="taxed pull-right">0</span>
               <span class="currency pull-right"></span>
             </li>
+            
             <li>
               <div class="row">
                 <div class="col-xs-6">
@@ -231,6 +236,7 @@ margin: -9px -15px 20px;
                 </div>
               </div>
             </li>
+            
           </ul>
           <div class="row">
             <div class="col-xs-4">
@@ -244,7 +250,9 @@ margin: -9px -15px 20px;
       </div>
       <div class="col-sm-4">
         <ul>
+        
           <h4>Settings</h4>
+          
           <li>
             <div class="row">
               <div class="col-sm-6">
@@ -272,6 +280,7 @@ margin: -9px -15px 20px;
               </div>
             </div>
           </li>
+          
           <li>
             <div class="row">
               <div class="col-sm-6">
@@ -285,6 +294,7 @@ margin: -9px -15px 20px;
               </div>
             </div>
           </li>
+          
           <li>
             <div class="row">
               <div class="col-sm-6">
@@ -298,17 +308,8 @@ margin: -9px -15px 20px;
               </div>
             </div>
           </li>
-          <li>
-            <div class="row">
-              <div class="col-sm-6">
-                Taxable
-              </div>
-              <div class="col-sm-6">
-                <input class="pull-right" id="tax-check" type="checkbox">
-              </div>
-            </div>
-          </li>
-          <li id="tax-input" style="display:none">
+          
+          <li id="tax-input">
             <div class="row">
               <div class="col-sm-6">
                 Tax
@@ -321,6 +322,7 @@ margin: -9px -15px 20px;
               </div>
             </div>
           </li>
+          
         </ul>
       </div>
     </div>
@@ -404,7 +406,7 @@ $('#currency').on('change', function(){
 });
 
 //Change input box on item to type of input
-$('#invoice .item .type').on('change', function () {
+$("#invoice").delegate( ".item .type", "change", function() {
   var itemtotal = $(this).closest(".row").find(".item-input-actual");
   var inputType = $(this).closest(".row").find(".input-type");
   if ($(this).val() == 0) {
@@ -423,9 +425,9 @@ $('#invoice .item .type').on('change', function () {
   calcTotal();
 });
 
-//Open tax setting on selection of tax checkbox
-$('#tax-check').on('change', function () {
-  $('#tax-input, #tax-bar').slideToggle();
+//Add tax when tax is input
+$('#tax-amount').on('keyup', 'input', function () {
+  $('.tax-bar').slideToggle();
 });
 
 //Global variable settings
@@ -466,6 +468,12 @@ function calcFixed() {
     $(this).closest(".row").find('.itemtotal').html($(this).val());
   });
 }
+//Function to calculate based on milage
+function calcMileage() {
+  $('#invoice').find('.mileage').each(function(){
+    $(this).closest(".row").find('.itemtotal').html((($(this).val()) * mile));
+  });
+}
 
 //Function for form calculation
 function calcTotal() {
@@ -473,6 +481,7 @@ function calcTotal() {
   settings();
   calcHours();
   calcFixed();
+  calcMileage();
   //Add up all items
 	var subtotal = 0;
 	$('#invoice').find('.itemtotal').each(function () {
