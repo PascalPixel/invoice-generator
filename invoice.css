@@ -1,0 +1,71 @@
+/* Remove list styling on invoice */
+#invoice .row {
+padding: 20px 0 10px;
+}
+#invoice ul {
+list-style-type: none;
+margin: 0;
+padding: 0;
+}
+#invoice h3 {
+margin: 0 0 10px;
+}
+/* Style rows of invoice */
+#invoice li {
+line-height: 32px;
+border-bottom: solid 1px #dbdbdb;
+}
+#invoice #items li {
+border-bottom-style: dashed;
+}
+/* Style input boxes for numbers */
+#invoice .itemtotal {
+float: right;
+text-align: right;
+}
+/* Input margins */
+#invoice input {
+margin: 0px 0 10px 0;
+}
+/* Type boxes */
+#invoice .input-type {
+position: relative;
+}
+#invoice .input-type .currency,
+#invoice .input-type .percentage {
+display: none;
+}
+#invoice .input-type.money input, 
+#invoice .input-type.timest input {
+padding-left: 20px;
+}
+#invoice .input-type.money .currency,
+#invoice .input-type .times {
+position:absolute;
+display: inherit;
+color:#BBB;
+left:10px;
+top:1px;
+}
+#invoice .timest {
+display: none;
+}
+#invoice .input-type.tax input {
+padding-right: 20px;
+}
+#invoice .input-type.tax .percentage {
+position:absolute;
+display: inherit;
+color:#BBB;
+right:10px;
+top:1px;
+}
+#invoice .caret {
+display: none;
+}
+#invoice-number {
+text-align: right;
+}
+#invoice #item-total {
+text-align: right;
+}
