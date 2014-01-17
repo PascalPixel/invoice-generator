@@ -39,18 +39,24 @@ margin: 0px 0 10px 0;
 #invoice .input-type {
 position: relative;
 }
-#invoice .input-type .currency, #invoice .input-type .percentage {
+#invoice .input-type .currency,
+#invoice .input-type .percentage {
 display: none;
 }
-#invoice .input-type.money input {
+#invoice .input-type.money input, 
+#invoice .input-type.timest input {
 padding-left: 20px;
 }
-#invoice .input-type.money .currency {
+#invoice .input-type.money .currency,
+#invoice .input-type .times {
 position:absolute;
 display: inherit;
 color:#BBB;
 left:10px;
 top:1px;
+}
+#invoice .timest {
+display: none;
 }
 #invoice .input-type.tax input {
 padding-right: 20px;
@@ -222,10 +228,10 @@ $(document).ready(function () {
 var $item =
 "<li class=\"item\" style=\"display:none;\">"+
   "<div class=\"row\">"+
-    "<div class=\"col-lg-6\">"+
+    "<div class=\"col-lg-4\">"+
       "<input class=\"form-control\" onclick=\"this.select()\" type=\"text\" value=\"Item description\">"+
     "<\/div>"+
-    "<div class=\"col-xs-4 col-lg-2\">"+
+    "<div class=\"col-xs-12 col-sm-4 col-lg-2\">"+
       "<select class=\"type\">"+
         "<option value=\"0\"> Hours <\/option>"+
         "<option value=\"1\"> Fixed <\/option>"+
@@ -234,14 +240,20 @@ var $item =
       "<\/select>"+
       "<div class=\"caret\"><\/div>"+
     "<\/div>"+
-    "<div id=\"item-input\" class=\"col-xs-4 col-lg-2\">"+
+    "<div id=\"item-input\" class=\"col-xs-4 col-sm-3 col-lg-2\">"+
       "<div class=\"input-type\">"+
         "<span class=\"currency\"><\/span>"+
         "<input class=\"item-input-actual form-control hours\" onclick=\"this.select()\" type=\"text\" value=\"0\">"+
         "<span class=\"percentage\">%<\/span>"+
       "<\/div>"+
     "<\/div>"+
-    "<div id=\"item-total\" class=\"col-xs-4 col-lg-2\">"+
+    "<div id=\"item-times\" class=\"col-xs-4 col-sm-2 col-lg-2\">"+
+      "<div class=\"input-type timest\">"+
+        "<span class=\"times\">x<\/span>"+
+        "<input class=\"item-input-quantity form-control\" onclick=\"this.select()\" type=\"text\" value=\"0\">"+
+      "<\/div>"+
+    "<\/div>"+
+    "<div id=\"item-total\" class=\"col-xs-4 col-sm-3 col-lg-2\">"+
       "<h4>"+
         "<span class=\"currency\"><\/span>"+
         "<span class=\"itemtotal\">0<\/span>"+
@@ -293,25 +305,30 @@ $('#currency').on('change', function(){
 $("#invoice").delegate( ".item .type", "change", function() {
   var itemtotal = $(this).closest(".row").find(".item-input-actual");
   var inputType = $(this).closest(".row").find(".input-type");
+  var inputQuantity = $(this).closest(".row").find(".timest");
   if ($(this).val() == 0) {
     itemtotal.removeClass("fixed quantity mileage").addClass("hours");
+    inputQuantity.hide();
     inputType.removeClass("money");
   } else if ($(this).val() == 1) {
     itemtotal.removeClass("hours quantity mileage").addClass("fixed");
+    inputQuantity.hide();
     inputType.addClass("money");
   } else if ($(this).val() == 2) {
     itemtotal.removeClass("fixed hours mileage").addClass("quantity");
-    inputType.removeClass("money");
+    inputQuantity.show();
+    inputType.addClass("money");
   } else {
     itemtotal.removeClass("fixed quantity hours").addClass("mileage");
+    inputQuantity.hide();
     inputType.removeClass("money");
   }
   calcTotal();
 });
 
 //Add tax when tax is input
-$('#tax-amount').on('keyup', 'input', function () {
-  $('.tax-bar').slideToggle();
+$('#tax-amount').on('keyup', function() {
+  $('.tax-bar').slideDown();
 });
 
 //Global variable settings
@@ -343,19 +360,27 @@ function minToDec(min) {
 //Function to calculate based on hours
 function calcHours() {
   $('#invoice').find('.hours').each(function(){
-    $(this).closest(".row").find('.itemtotal').html((($(this).val()) * rate));
+    $(this).closest(".row").find('.itemtotal').html(twoDecimals($(this).val() * rate));
   });
 }
 //Function for fixed cost
 function calcFixed() {
   $('#invoice').find('.fixed').each(function(){
-    $(this).closest(".row").find('.itemtotal').html($(this).val());
+    $(this).closest(".row").find('.itemtotal').html(twoDecimals($(this).val()));
+  });
+}
+//Function for fixed cost
+function calcQuantity() {
+  $('#invoice').find('.quantity').each(function(){
+    var amount = $(this).closest(".row").find('.item-input-quantity').val();
+    var price = $(this).val();
+    $(this).closest(".row").find('.itemtotal').html(twoDecimals(amount * price));
   });
 }
 //Function to calculate based on milage
 function calcMileage() {
   $('#invoice').find('.mileage').each(function(){
-    $(this).closest(".row").find('.itemtotal').html((($(this).val()) * mile));
+    $(this).closest(".row").find('.itemtotal').html(twoDecimals($(this).val() * mile));
   });
 }
 
@@ -365,6 +390,7 @@ function calcTotal() {
   settings();
   calcHours();
   calcFixed();
+  calcQuantity();
   calcMileage();
   //Add up all items
 	var subtotal = 0;

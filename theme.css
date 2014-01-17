@@ -78,6 +78,7 @@ line-height: 1;
 width: 100%;
 -moz-appearance: none;
 -webkit-appearance: none;
+margin-bottom: 10px;
 }
 #invoice .caret {
 position: absolute;
