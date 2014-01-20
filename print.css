@@ -1,0 +1,26 @@
+* {
+  color: black !important;
+  box-shadow: none !important;
+  border: none !important;
+  background: white !important;
+  text-shadow: none !important;
+  -webkit-font-smoothing: inherit !important;
+}
+
+input, select {
+  border: 1px solid black !important;
+}
+
+.caret {
+  background: black !important;
+  width: 5px;
+  height: 5px;
+}
+
+li {
+  border-bottom: 1px solid black !important;
+}
+
+.box, .btn {
+  border: 1px solid black !important; 
+}

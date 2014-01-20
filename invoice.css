@@ -10,6 +10,9 @@ padding: 0;
 #invoice h3 {
 margin: 0 0 10px;
 }
+#company-name {
+font-weight: bold !important;
+}
 /* Style rows of invoice */
 #invoice li {
 line-height: 32px;
